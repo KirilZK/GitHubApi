@@ -20,33 +20,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".trending.TrendingReposFragment"
-    android:orientation="vertical">
+    >
 
     <TextView
         android:id="@+id/bus_stop_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="header"
-        android:textSize="16sp"
         android:gravity="center_horizontal"
         android:padding="8dp"
-        app:layout_constraintWidth_percent="0.5"
+        android:text="Filter"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/spinner"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="@id/arrival_time_header"
-        app:layout_constraintEnd_toStartOf="parent"/>
+        app:layout_constraintWidth_percent="0.5" />
 
-    <TextView
-        android:id="@+id/arrival_time_header"
+
+    <Spinner
+        android:id="@+id/spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="arrival_time_header"
-        android:textSize="16sp"
-        android:gravity="center_horizontal"
         android:padding="8dp"
-        app:layout_constraintWidth_percent="0.5"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/bus_stop_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toEndOf="@id/bus_stop_header"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_trending_repos"

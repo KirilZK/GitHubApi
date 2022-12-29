@@ -1,6 +1,6 @@
 package com.example.githubapi;
 
-import com.example.githubapi.data.FilterTimeSpanDescriptor;
+import com.example.githubapi.data.Filter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,30 +11,33 @@ import java.util.Locale;
 public class Utils {
 
 
-    public static String formatTimeFilterQuery(@FilterTimeSpanDescriptor.FilterTimeSpanDef String filter) {
-        String formattedTime = "";
+    public static String formatTimeFilterQuery(Filter filter) {
+        StringBuilder searchBuilder = new StringBuilder();
+        searchBuilder.append("created:>");
+
 
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
         switch (filter) {
 
-            case FilterTimeSpanDescriptor.DAILY:
+            case DAILY:
                 c.add(Calendar.HOUR_OF_DAY,-24);
 
                 break;
-            case FilterTimeSpanDescriptor.WEEKLY:
+            case WEEKLY:
                 c.add(Calendar.DAY_OF_MONTH, -7);
                 break;
-            case FilterTimeSpanDescriptor.MONTHLY:
+            case MONTHLY:
                 c.add(Calendar.MONTH, -1);
                 break;
 
 
 
         }
-        formattedTime = formatDate(c.getTime());
+        String formattedTime = formatDate(c.getTime());
+        searchBuilder.append(formattedTime);
 
-        return formattedTime;
+        return searchBuilder.toString();
 
 
     }

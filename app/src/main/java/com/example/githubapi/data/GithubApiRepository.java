@@ -3,8 +3,6 @@ package com.example.githubapi.data;
 import android.util.Log;
 
 import com.example.githubapi.GitHubApiApplication;
-import com.example.githubapi.data.FilterTimeSpanDescriptor;
-import com.example.githubapi.data.Result;
 import com.example.githubapi.data.model.Item;
 import com.example.githubapi.data.model.RepoResponse;
 import com.example.githubapi.data.remote.RestClient;
