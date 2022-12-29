@@ -1,4 +1,4 @@
-package com.example.githubapi.trending.adapter;
+package com.example.githubapi.trending;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,11 +16,19 @@ import java.util.List;
 public class TrendingAdapter extends
         RecyclerView.Adapter<TrendingAdapter.ViewHolder> {
 
+
+    public interface OnItemClickListener{
+        void onItemClick(Item item);
+    }
+
     private List<Item> trendingRepos;
 
+    private OnItemClickListener onItemClickListener;
 
-    public TrendingAdapter(List<Item> contacts) {
+
+    public TrendingAdapter(List<Item> contacts,OnItemClickListener onItemClickListener) {
         trendingRepos = contacts;
+        this.onItemClickListener = onItemClickListener;
     }
 
     public TrendingAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,6 +44,12 @@ public class TrendingAdapter extends
     public void onBindViewHolder(TrendingAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         Item item = trendingRepos.get(position);
+         holder.binding.itemView.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 onItemClickListener.onItemClick(item);
+             }
+         });
 
         holder.binding.txtAuthor.setText(item.getOwner().getLogin());
         Glide.with(holder.binding.imgRepo.getContext())
@@ -60,6 +74,8 @@ public class TrendingAdapter extends
         public ViewHolder(ItemTrendingRepoBinding b){
             super(b.getRoot());
             binding = b;
+
+
         }
 
     }
