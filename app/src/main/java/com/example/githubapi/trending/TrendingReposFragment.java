@@ -18,34 +18,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
-import com.example.githubapi.Constants;
-import com.example.githubapi.MainActivity;
 import com.example.githubapi.R;
-import com.example.githubapi.Utils;
 import com.example.githubapi.data.Filter;
-import com.example.githubapi.data.GithubApiRepository;
 import com.example.githubapi.data.Result;
 import com.example.githubapi.data.model.Item;
 import com.example.githubapi.data.model.RepoResponse;
-import com.example.githubapi.databinding.TrendingReposFragmentBinding;
+import com.example.githubapi.databinding.FragmentTrendingReposBinding;
 
-import java.util.Calendar;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class TrendingReposFragment extends Fragment implements TrendingAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     private TrendingReposViewModel mViewModel;
 
 
-    private TrendingReposFragmentBinding binding;
+    private FragmentTrendingReposBinding binding;
     private View view;
-    private Map<Filter,String> map = new HashMap<>();
+    private Map<Filter, String> spinnerValuesMap = new HashMap<>();
 
 
     public static TrendingReposFragment newInstance() {
@@ -56,7 +49,7 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        binding = TrendingReposFragmentBinding.inflate(inflater, container, false);
+        binding = FragmentTrendingReposBinding.inflate(inflater, container, false);
         view = binding.getRoot();
         return view;
 
@@ -70,26 +63,12 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
                 this,
                 ViewModelProvider.Factory.from(TrendingReposViewModel.initializer)
         ).get(TrendingReposViewModel.class);
-
-        buildSpinnerFilterMap();
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.filter_array, android.R.layout.simple_spinner_item);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinner.setOnItemSelectedListener(this);
-        binding.spinner.setAdapter(adapter);
-
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        binding.rvTrendingRepos.setLayoutManager(layoutManager);
-
-
-        final Observer<Result<RepoResponse>> repoObserver = new Observer<Result<RepoResponse>>() {
+        final Observer<Result<List<Item>>> repoObserver = new Observer<Result<List<Item>>>() {
             @Override
-            public void onChanged(@Nullable final Result<RepoResponse> result) {
+            public void onChanged(@Nullable final Result<List<Item>> result) {
                 Log.d("TAG", "on changed");
                 if (result instanceof Result.Success) {
-                    List<Item> items = ((Result.Success<RepoResponse>) result).data.getItems();
+                    List<Item> items = ((Result.Success<List<Item>>) result).data;
 
                     binding.rvTrendingRepos.setAdapter(new TrendingAdapter(items, TrendingReposFragment.this));
 
@@ -102,15 +81,44 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
         mViewModel.getTrendingRepos().observe(getViewLifecycleOwner(), repoObserver);
 
 
+        binding.btnFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Navigation.findNavController(view).navigate(TrendingReposFragmentDirections.actionTrendingReposFragmentToFavorites());
+            }
+        });
+
+         setupSpinner();
+
+         setupAdapter();
+
 
     }
-//
-    private void buildSpinnerFilterMap(){
 
-        map.put(Filter.MONTHLY,"Monthly");
-        map.put(Filter.WEEKLY,"Weekly");
-        map.put(Filter.DAILY,"Daily");
+    private void setupAdapter() {
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        binding.rvTrendingRepos.setLayoutManager(layoutManager);
+    }
 
+    private void setupSpinner(){
+        buildSpinnerFilterMap();
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.filter_array, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinner.setOnItemSelectedListener(this);
+        binding.spinner.setAdapter(adapter);
+    }
+
+    //
+    private void buildSpinnerFilterMap() {
+
+        spinnerValuesMap.put(Filter.MONTHLY, "Monthly");
+        spinnerValuesMap.put(Filter.WEEKLY, "Weekly");
+        spinnerValuesMap.put(Filter.DAILY, "Daily");
 
 
     }
@@ -118,7 +126,7 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
 
     private void onFilterSelected(String selectedFilter) {
         Filter filter;
-        Log.d("TAG", selectedFilter+ " clicked");
+        Log.d("TAG", selectedFilter + " clicked");
         switch (selectedFilter) {
 
             case "Daily":
@@ -132,18 +140,26 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
             default:
                 filter = Filter.MONTHLY;
         }
-        mViewModel.setFilter(filter);
+        mViewModel.filterTrendingRepos(filter);
 
 
     }
 
     @Override
-    public void onItemClick(Item item) {
-        Log.d("TAG", "on item clicked");
+    public void onItemClick(int pos,Item item) {
+        Log.d("TAG", "on item clicked"  + pos);
+
+
 
         TrendingReposFragmentDirections.ActionFullListFragmentToDetailFragment action = TrendingReposFragmentDirections.actionFullListFragmentToDetailFragment(item.getId());
-        Navigation.findNavController(view).navigate(action);
+       Navigation.findNavController(view).navigate(action);
 
+    }
+
+    @Override
+    public void onItemFavClick(int pos, Item item) {
+        Log.d("TAG", "on item clicked fav"  + pos);
+        mViewModel.setFavoriteRepo(pos,item, !item.isFavorite());
     }
 
 
@@ -153,16 +169,11 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
         // prevent multiple calls to fetch new data when Configuration change happened
         // (OnItemSelected listener is called on every spinner initialization)
 
-        if(String.valueOf( adapterView.getItemAtPosition(i)).equalsIgnoreCase(map.get(mViewModel.getFilter().getValue())))
+        if (String.valueOf(adapterView.getItemAtPosition(i)).equalsIgnoreCase(spinnerValuesMap.get(mViewModel.getFilter().getValue())))
             return;
 
-
-
-
-
-        Log.d("TAG", i +" clicked");
-           onFilterSelected((String) adapterView.getItemAtPosition(i));
-
+        Log.d("TAG", i + " clicked");
+        onFilterSelected((String) adapterView.getItemAtPosition(i));
 
 
     }
@@ -172,4 +183,6 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
 
 
     }
+
+
 }

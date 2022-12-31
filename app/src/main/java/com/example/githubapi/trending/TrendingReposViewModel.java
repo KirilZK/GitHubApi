@@ -3,8 +3,6 @@ package com.example.githubapi.trending;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-import androidx.lifecycle.TransformationsKt;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
@@ -16,73 +14,79 @@ import com.example.githubapi.data.Filter;
 import com.example.githubapi.data.GithubApiRepository;
 import com.example.githubapi.data.Result;
 
-import com.example.githubapi.data.model.RepoResponse;
+import com.example.githubapi.data.model.Item;
 
 import java.util.HashMap;
 
+import java.util.List;
 import java.util.Map;
 
 
 public class TrendingReposViewModel extends ViewModel {
 
 
-
     private MutableLiveData<Filter> filter = new MutableLiveData<>(Filter.MONTHLY);
 
 
-    public void setFilter(Filter filter) {
-        this.filter.setValue(filter);
-        fetchRepos(filter);
-
-    }
-
-    public LiveData<Filter> getFilter(){
+    public LiveData<Filter> getFilter() {
 
         return filter;
     }
 
-    private int currentPage = 1;
 
     public TrendingReposViewModel(GithubApiRepository githubApiRepository) {
         repository = githubApiRepository;
-        fetchRepos(filter.getValue());
-
+        getRepos(filter.getValue(),true);
 
 
     }
 
     private GithubApiRepository repository;
 
-    private MutableLiveData<Result<RepoResponse>> trendingRepos = new MutableLiveData<>() ;
 
-    public LiveData<Result<RepoResponse>> getTrendingRepos() {
+    private MutableLiveData<Result<List<Item>>> trendingRepos = new MutableLiveData<>();
+
+
+    public LiveData<Result<List<Item>>> getTrendingRepos() {
         return trendingRepos;
     }
 
 
+    public void filterTrendingRepos(Filter filter) {
+        this.filter.setValue(filter);
+        getRepos(filter,true);
 
-    public void fetchRepos(Filter filter) {
+    }
 
-        repository.getTrendingRepos(buildQuery(filter), new GithubApiRepository.RepositoryCallback<RepoResponse>() {
+    public void getRepos(Filter filter,boolean refresh) {
+
+        repository.getTrendingRepos(buildQuery(filter), new GithubApiRepository.RepositoryCallback<List<Item>>() {
             @Override
-            public void onComplete(Result<RepoResponse> result) {
+            public void onComplete(Result<List<Item>> result) {
                 trendingRepos.postValue(result);
 
-            }
-        });
 
+            }
+        },refresh);
+
+
+    }
+
+
+    public void setFavoriteRepo(int pos, Item item,boolean favorite) {
+
+         repository.addRemoveToFavorite(pos,item,favorite);
+         getRepos(filter.getValue(),false);
 
     }
 
 
     private Map<String, String> buildQuery(Filter filter) {
-
         Map<String, String> data = new HashMap<>();
         data.put("q", Utils.formatTimeFilterQuery(filter));
         data.put("sort", "stars");
         data.put("order", "desc");
-        data.put("per_page", "30");
-        data.put("page", String.valueOf(currentPage));
+        data.put("per_page", "50");
         return data;
 
     }

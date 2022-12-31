@@ -1,4 +1,6 @@
-package com.example.githubapi.data.remote;
+package com.example.githubapi.data;
+
+import com.example.githubapi.data.ApiInterface;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

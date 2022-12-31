@@ -15,8 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.githubapi.R;
-import com.example.githubapi.databinding.DetailRepoFragmentBinding;
-import com.example.githubapi.databinding.TrendingReposFragmentBinding;
+
+import com.example.githubapi.databinding.FragmentDetailRepoBinding;
+
 import com.example.githubapi.trending.TrendingReposFragmentDirections;
 import com.example.githubapi.trending.TrendingReposViewModel;
 
@@ -24,7 +25,7 @@ import com.example.githubapi.trending.TrendingReposViewModel;
 public class TrendingRepoDetailFragment extends Fragment {
 
 
-    private DetailRepoFragmentBinding binding;
+    private FragmentDetailRepoBinding binding;
 
 
 
@@ -32,7 +33,7 @@ public class TrendingRepoDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = DetailRepoFragmentBinding.inflate(inflater, container, false);
+        binding = FragmentDetailRepoBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         return view;
 

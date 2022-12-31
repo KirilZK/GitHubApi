@@ -1,4 +1,4 @@
-package com.example.githubapi;
+package com.example.githubapi.trending;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.githubapi.R;
 import com.example.githubapi.data.Result;
 import com.example.githubapi.data.model.Item;
 import com.example.githubapi.data.model.RepoResponse;

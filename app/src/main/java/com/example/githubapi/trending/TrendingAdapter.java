@@ -5,9 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.githubapi.R;
 import com.example.githubapi.data.model.Item;
 import com.example.githubapi.databinding.ItemTrendingRepoBinding;
 
@@ -18,7 +20,8 @@ public class TrendingAdapter extends
 
 
     public interface OnItemClickListener{
-        void onItemClick(Item item);
+        void onItemClick(int pos,Item item);
+        void onItemFavClick(int pos,Item item);
     }
 
     private List<Item> trendingRepos;
@@ -47,9 +50,23 @@ public class TrendingAdapter extends
          holder.binding.itemView.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
-                 onItemClickListener.onItemClick(item);
+                 onItemClickListener.onItemClick(holder.getAdapterPosition(), item);
              }
          });
+         holder.binding.btnFav.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+
+                 onItemClickListener.onItemFavClick(holder.getAdapterPosition(), item);
+             }
+         });
+
+         if(item.isFavorite()){
+             holder.binding.btnFav.setColorFilter((ContextCompat.getColor(holder.binding.btnFav.getContext(), R.color.fav_selected)), android.graphics.PorterDuff.Mode.SRC_IN);
+         }else{
+             holder.binding.btnFav.setColorFilter((ContextCompat.getColor(holder.binding.btnFav.getContext(), R.color.fav_disabled)), android.graphics.PorterDuff.Mode.SRC_IN);
+
+         }
 
         holder.binding.txtAuthor.setText(item.getOwner().getLogin());
         Glide.with(holder.binding.imgRepo.getContext())

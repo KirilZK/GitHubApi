@@ -1,4 +1,4 @@
-package com.example.githubapi.data.remote;
+package com.example.githubapi.data;
 
 import com.example.githubapi.data.model.RepoResponse;
 
