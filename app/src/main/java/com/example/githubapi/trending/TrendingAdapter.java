@@ -1,6 +1,7 @@
 package com.example.githubapi.trending;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,12 +48,16 @@ public class TrendingAdapter extends
     public void onBindViewHolder(TrendingAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         Item item = trendingRepos.get(position);
-         holder.binding.itemView.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 onItemClickListener.onItemClick(holder.getAdapterPosition(), item);
-             }
-         });
+
+
+
+        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemClickListener.onItemClick(holder.getAdapterPosition(), item);
+            }
+        });
+
          holder.binding.btnFav.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
@@ -67,8 +72,16 @@ public class TrendingAdapter extends
              holder.binding.btnFav.setColorFilter((ContextCompat.getColor(holder.binding.btnFav.getContext(), R.color.fav_disabled)), android.graphics.PorterDuff.Mode.SRC_IN);
 
          }
+        holder.binding.tvRepoName.setText(item.getName());
+        String formattedName = String.format(holder.binding.btnFav.getContext().getString(R.string.owner_name), item.getOwner().getLogin());
+        holder.binding.tvAuthor.setText(formattedName);
+        if(TextUtils.isEmpty(item.getDescription())){
+            holder.binding.tvDesc.setText(holder.binding.tvDesc.getContext().getString(R.string.empty_repo_desc));
+        }else{
+            holder.binding.tvDesc.setText(item.getDescription());
+        }
 
-        holder.binding.txtAuthor.setText(item.getOwner().getLogin());
+        holder.binding.tvStars.setText(String.valueOf(item.getStargazersCount()));
         Glide.with(holder.binding.imgRepo.getContext())
                 .load(item.getOwner().getAvatarUrl())
                 .into( holder.binding.imgRepo);

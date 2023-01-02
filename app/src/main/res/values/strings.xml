@@ -2,4 +2,9 @@
     <string name="app_name">GitHubApi</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="empty_repo_desc">No description available</string>
+    <string name="owner_name">Owner: %1$s </string>
+    <string name="lang">Language: %1$s </string>
+    <string name="forks">Forks: %1$s </string>
+    <string name="created">Created: %1$s </string>
 </resources>

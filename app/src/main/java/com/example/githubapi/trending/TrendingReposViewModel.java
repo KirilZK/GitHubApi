@@ -24,15 +24,12 @@ import java.util.Map;
 
 public class TrendingReposViewModel extends ViewModel {
 
-
+    private GithubApiRepository repository;
     private MutableLiveData<Filter> filter = new MutableLiveData<>(Filter.MONTHLY);
 
-
     public LiveData<Filter> getFilter() {
-
         return filter;
     }
-
 
     public TrendingReposViewModel(GithubApiRepository githubApiRepository) {
         repository = githubApiRepository;
@@ -41,12 +38,7 @@ public class TrendingReposViewModel extends ViewModel {
 
     }
 
-    private GithubApiRepository repository;
-
-
     private MutableLiveData<Result<List<Item>>> trendingRepos = new MutableLiveData<>();
-
-
     public LiveData<Result<List<Item>>> getTrendingRepos() {
         return trendingRepos;
     }

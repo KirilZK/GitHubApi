@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,6 +60,7 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d("TAG", "on view created");
         mViewModel = new ViewModelProvider(
                 this,
                 ViewModelProvider.Factory.from(TrendingReposViewModel.initializer)
@@ -100,6 +102,8 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
     private void setupAdapter() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         binding.rvTrendingRepos.setLayoutManager(layoutManager);
+        binding.rvTrendingRepos. addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+
     }
 
     private void setupSpinner(){

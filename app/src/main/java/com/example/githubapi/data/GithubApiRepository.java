@@ -22,6 +22,7 @@ public class GithubApiRepository {
     private List<Item> cashedRepoList;
     private final Executor executor;
 
+
     public interface RepositoryCallback<T> {
         void onComplete(Result<T> result);
     }
@@ -32,9 +33,6 @@ public class GithubApiRepository {
         this.localDataSource = localDataSource;
     }
 
-    public List<Item> getCashedRepoList() {
-        return cashedRepoList;
-    }
 
     public void addRemoveToFavorite(int pos, Item item, boolean add) {
         if (add) {

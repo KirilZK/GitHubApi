@@ -42,14 +42,12 @@ public class TrendingRepoDetailFragment extends Fragment {
 
 
 
-
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         int repoId = getArguments() != null ? getArguments().getInt("repoId") : 0;
-        binding.id.setText(String.valueOf(repoId));
+        binding.tvDetailDescription.setText(String.valueOf(repoId));
 
         Log.d("TAG", repoId +" ");
     }
