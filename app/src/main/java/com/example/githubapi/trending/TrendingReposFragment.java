@@ -98,6 +98,7 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
 
     private void showErrorView(boolean show) {
         binding.ivError.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        binding.rvTrendingRepos.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
         binding.tvError.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
