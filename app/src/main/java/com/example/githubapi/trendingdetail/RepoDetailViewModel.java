@@ -65,6 +65,7 @@ public class RepoDetailViewModel extends ViewModel {
     public void openRepoPage(String url) {
 
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         GitHubApiApplication.getAppContext().startActivity(browserIntent);
 
     }
