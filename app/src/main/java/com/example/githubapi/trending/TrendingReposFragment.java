@@ -42,8 +42,6 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
     private Map<Filter, String> spinnerValuesMap = new HashMap<>();
 
 
-
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -69,10 +67,11 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
                 Log.d("TAG", "on changed");
                 if (result instanceof Result.Success) {
                     List<Item> items = ((Result.Success<List<Item>>) result).data;
-
+                    showErrorView(false);
                     binding.rvTrendingRepos.setAdapter(new TrendingAdapter(items, TrendingReposFragment.this));
 
                 } else {
+                    showErrorView(true);
                     Log.d("TAG", "Error");
                 }
             }
@@ -90,21 +89,27 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
             }
         });
 
-         setupSpinner();
+        setupSpinner();
 
-         setupAdapter();
+        setupAdapter();
 
 
     }
+
+    private void showErrorView(boolean show) {
+        binding.ivError.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        binding.tvError.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    }
+
 
     private void setupAdapter() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         binding.rvTrendingRepos.setLayoutManager(layoutManager);
-        binding.rvTrendingRepos. addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        binding.rvTrendingRepos.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
     }
 
-    private void setupSpinner(){
+    private void setupSpinner() {
         buildSpinnerFilterMap();
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
@@ -148,9 +153,8 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
     }
 
     @Override
-    public void onItemClick(int pos,Item item) {
-        Log.d("TAG", "on item clicked"  + pos);
-
+    public void onItemClick(int pos, Item item) {
+        Log.d("TAG", "on item clicked" + pos);
 
 
         TrendingReposFragmentDirections.ActionFullListFragmentToDetailFragment action = TrendingReposFragmentDirections.actionFullListFragmentToDetailFragment(item.getId());
@@ -160,7 +164,7 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
 
     @Override
     public void onItemFavClick(int pos, Item item) {
-        Log.d("TAG", "on item clicked fav"  + pos);
+        Log.d("TAG", "on item clicked fav" + pos);
         mViewModel.setFavoriteRepo(item, !item.isFavorite());
     }
 
