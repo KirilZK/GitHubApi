@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import com.example.githubapi.data.source.local.GitRepoLocalDataSource;
 import com.example.githubapi.data.model.Item;
 import com.example.githubapi.data.model.RepoResponse;
+import com.example.githubapi.data.source.local.GitRepoRoomDatabase;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +16,9 @@ import java.util.concurrent.Executor;
 import retrofit2.Response;
 
 public class GithubApiRepository {
-    private RestClient restClient;
+    private ApiInterface restClient;
 
-    private GitRepoLocalDataSource localDataSource;
+    private RepoDataSource localDataSource;
     private List<Item> networkCashedRepoList;
     private final Executor executor;
 
@@ -26,7 +27,7 @@ public class GithubApiRepository {
         void onComplete(Result<T> result);
     }
 
-    public GithubApiRepository(Executor executor, GitRepoLocalDataSource localDataSource, RestClient restClient) {
+    public GithubApiRepository(Executor executor, RepoDataSource localDataSource, ApiInterface restClient) {
         this.restClient = restClient;
         this.executor = executor;
         this.localDataSource = localDataSource;
@@ -35,31 +36,32 @@ public class GithubApiRepository {
 
     public void addRemoveToFavorite(Item item, boolean add) {
         if (add) {
+            executor.execute(() -> {
+                saveRepo(item);
+            });
 
-            saveRepo(item);
         } else {
-            deleteRepo(item);
-        }
+            executor.execute(() -> {
+                deleteRepo(item);
+            });
 
+        }
         updateCachedList(item.getId(),add);
 
     }
 
     private void updateCachedList(int id,boolean add){
-
         for (Item item: networkCashedRepoList) {
             if(item.getId() == id){
                 item.setFavorite(add);
                 return;
             }
-
         }
-
 
     }
 
     public void saveRepo(Item item) {
-        localDataSource.insertGitRepo(item);
+        localDataSource.saveGitRepo(item);
     }
 
     public void deleteRepo(Item item) {
@@ -144,7 +146,7 @@ public class GithubApiRepository {
                         return;
                     }
 
-                    Response<RepoResponse> repoResponse = restClient.getUrlService().getTrendingRepositories(queryMap).execute();
+                    Response<RepoResponse> repoResponse = restClient.getTrendingRepositories(queryMap).execute();
                     if (repoResponse.isSuccessful() && repoResponse.body() != null) {
                         RepoResponse response = repoResponse.body();
 

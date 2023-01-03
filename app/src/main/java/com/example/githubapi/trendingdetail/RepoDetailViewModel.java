@@ -58,7 +58,7 @@ public class RepoDetailViewModel extends ViewModel {
                 GitHubApiApplication app = (GitHubApiApplication) creationExtras.get(APPLICATION_KEY);
                 assert app != null;
 
-                return new RepoDetailViewModel(app.getRepository());
+                return new RepoDetailViewModel(app.getAppContainer().getRepository());
             }
     );
 

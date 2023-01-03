@@ -15,7 +15,7 @@ import java.util.List;
 @Dao
 public interface GitRepoDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Item item);
 
     @Delete

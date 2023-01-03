@@ -91,7 +91,7 @@ public class TrendingReposViewModel extends ViewModel {
                 GitHubApiApplication app = (GitHubApiApplication) creationExtras.get(APPLICATION_KEY);
                 assert app != null;
 
-                return new TrendingReposViewModel(app.getRepository());
+                return new TrendingReposViewModel(app.getAppContainer().getRepository());
             }
     );
 

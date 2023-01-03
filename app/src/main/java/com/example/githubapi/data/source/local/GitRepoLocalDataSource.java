@@ -2,36 +2,38 @@ package com.example.githubapi.data.source.local;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.githubapi.data.RepoDataSource;
 import com.example.githubapi.data.model.Item;
 
 import java.util.List;
 
-public class GitRepoLocalDataSource {
+public class GitRepoLocalDataSource implements RepoDataSource {
     private GitRepoDao gitRepoDao;
-    private LiveData<List<Item>> liveGitRepos;
 
     public GitRepoLocalDataSource(GitRepoDao gitRepoDao) {
         this.gitRepoDao = gitRepoDao;
-        liveGitRepos = gitRepoDao.getLiveGitRepos();
 
 
     }
 
-    public void insertGitRepo(Item item) {
 
-        GitRepoRoomDatabase.databaseWriteExecutor.execute(() -> {
-            gitRepoDao.insert(item);
-        });
+    @Override
+    public void saveGitRepo(Item item) {
+        gitRepoDao.insert(item);
     }
+
+    @Override
     public void deleteGitRepo(Item item) {
-        GitRepoRoomDatabase.databaseWriteExecutor.execute(() -> {
-            gitRepoDao.deleteGitRepo(item);
-        });
-    }
-    public LiveData<List<Item>> observeGitRepos() {
-        return liveGitRepos;
+        gitRepoDao.deleteGitRepo(item);
+
     }
 
+    @Override
+    public LiveData<List<Item>> observeGitRepos() {
+        return gitRepoDao.getLiveGitRepos();
+    }
+
+    @Override
     public List<Item> getGitRepos() {
 
         return gitRepoDao.getAllSavedGitRepos();
