@@ -39,7 +39,12 @@ public class FavoritesReposViewModel extends ViewModel {
 
 
     }
+    public void setFavoriteRepo( Item item,boolean favorite) {
 
+        repository.addRemoveToFavorite(item,favorite);
+
+
+    }
 
 
 

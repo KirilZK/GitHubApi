@@ -43,5 +43,9 @@
     <fragment  android:id="@+id/favoritesRepoFragment"
         android:name="com.example.githubapi.favorites.FavoritesReposFragment"
         android:label="Favorites"
-        tools:layout="@layout/fragment_favorites_repos" />
+        tools:layout="@layout/fragment_favorites_repos" >
+        <action
+            android:id="@+id/action_favoritesRepoFragment_to_repoDetailFragment"
+            app:destination="@id/repoDetailFragment" />
+    </fragment>
 </navigation>

@@ -37,5 +37,9 @@ public class GitRepoLocalDataSource {
         return gitRepoDao.getAllSavedGitRepos();
     }
 
+    public LiveData<Item> observeGitRepo(int id) {
+        return gitRepoDao.getRepo(id);
+    }
+
 
 }

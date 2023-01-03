@@ -39,6 +39,7 @@ public class TrendingReposViewModel extends ViewModel {
     }
 
     private MutableLiveData<Result<List<Item>>> trendingRepos = new MutableLiveData<>();
+
     public LiveData<Result<List<Item>>> getTrendingRepos() {
         return trendingRepos;
     }
@@ -65,9 +66,9 @@ public class TrendingReposViewModel extends ViewModel {
     }
 
 
-    public void setFavoriteRepo(int pos, Item item,boolean favorite) {
+    public void setFavoriteRepo( Item item,boolean favorite) {
 
-         repository.addRemoveToFavorite(pos,item,favorite);
+         repository.addRemoveToFavorite(item,favorite);
          getRepos(filter.getValue(),false);
 
     }

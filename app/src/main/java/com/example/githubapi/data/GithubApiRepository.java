@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.githubapi.GitHubApiApplication;
 import com.example.githubapi.data.source.local.GitRepoLocalDataSource;
 import com.example.githubapi.data.model.Item;
 import com.example.githubapi.data.model.RepoResponse;
@@ -16,10 +15,10 @@ import java.util.concurrent.Executor;
 import retrofit2.Response;
 
 public class GithubApiRepository {
-    private RestClient restClient =
-            GitHubApiApplication.getRestClient();
+    private RestClient restClient;
+
     private GitRepoLocalDataSource localDataSource;
-    private List<Item> cashedRepoList;
+    private List<Item> networkCashedRepoList;
     private final Executor executor;
 
 
@@ -27,14 +26,14 @@ public class GithubApiRepository {
         void onComplete(Result<T> result);
     }
 
-    public GithubApiRepository(Executor executor, GitRepoLocalDataSource localDataSource) {
-
+    public GithubApiRepository(Executor executor, GitRepoLocalDataSource localDataSource, RestClient restClient) {
+        this.restClient = restClient;
         this.executor = executor;
         this.localDataSource = localDataSource;
     }
 
 
-    public void addRemoveToFavorite(int pos, Item item, boolean add) {
+    public void addRemoveToFavorite(Item item, boolean add) {
         if (add) {
 
             saveRepo(item);
@@ -42,8 +41,20 @@ public class GithubApiRepository {
             deleteRepo(item);
         }
 
+        updateCachedList(item.getId(),add);
 
-        cashedRepoList.get(pos).setFavorite(add);
+    }
+
+    private void updateCachedList(int id,boolean add){
+
+        for (Item item: networkCashedRepoList) {
+            if(item.getId() == id){
+                item.setFavorite(add);
+                return;
+            }
+
+        }
+
 
     }
 
@@ -57,9 +68,18 @@ public class GithubApiRepository {
     }
 
 
+    public LiveData<Item> observeRepo(int id) {
+        return localDataSource.observeGitRepo(id);
+
+
+    }
+
+
+    /// wrap inside result object to handle null values
+
     public Item getTrendingRepo(int repoId) {
-        if (cashedRepoList != null && !cashedRepoList.isEmpty()) {
-            for (Item repo : cashedRepoList) {
+        if (networkCashedRepoList != null && !networkCashedRepoList.isEmpty()) {
+            for (Item repo : networkCashedRepoList) {
                 if (repo.getId() == repoId) {
                     return repo;
                 }
@@ -118,8 +138,8 @@ public class GithubApiRepository {
 
                     // return cached version updated with fav filed
 
-                    if (!refresh && (cashedRepoList != null && !cashedRepoList.isEmpty())) {
-                        Result<List<Item>> result = new Result.Success<>(cashedRepoList);
+                    if (!refresh && (networkCashedRepoList != null && !networkCashedRepoList.isEmpty())) {
+                        Result<List<Item>> result = new Result.Success<>(networkCashedRepoList);
                         callback.onComplete(result);
                         return;
                     }
@@ -129,8 +149,8 @@ public class GithubApiRepository {
                         RepoResponse response = repoResponse.body();
 
 
-                        cashedRepoList = updateStateWithSavedRepos(response.getItems());
-                        Result<List<Item>> result = new Result.Success<>(cashedRepoList);
+                        networkCashedRepoList = updateStateWithSavedRepos(response.getItems());
+                        Result<List<Item>> result = new Result.Success<>(networkCashedRepoList);
                         callback.onComplete(result);
 
                     } else {

@@ -28,5 +28,8 @@ public interface GitRepoDao {
     @Query("SELECT * FROM git_repo")
     LiveData<List<Item>> getLiveGitRepos();
 
+    @Query("SELECT * FROM git_repo WHERE id = :id")
+    LiveData<Item> getRepo(int id);
+
 
 }

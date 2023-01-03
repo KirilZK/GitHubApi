@@ -42,9 +42,7 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
     private Map<Filter, String> spinnerValuesMap = new HashMap<>();
 
 
-    public static TrendingReposFragment newInstance() {
-        return new TrendingReposFragment();
-    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -156,14 +154,14 @@ public class TrendingReposFragment extends Fragment implements TrendingAdapter.O
 
 
         TrendingReposFragmentDirections.ActionFullListFragmentToDetailFragment action = TrendingReposFragmentDirections.actionFullListFragmentToDetailFragment(item.getId());
-       Navigation.findNavController(view).navigate(action);
+        Navigation.findNavController(view).navigate(action);
 
     }
 
     @Override
     public void onItemFavClick(int pos, Item item) {
         Log.d("TAG", "on item clicked fav"  + pos);
-        mViewModel.setFavoriteRepo(pos,item, !item.isFavorite());
+        mViewModel.setFavoriteRepo(item, !item.isFavorite());
     }
 
 

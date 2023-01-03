@@ -1,5 +1,7 @@
 package com.example.githubapi;
 
+import java.text.ParseException;
+
 import com.example.githubapi.data.Filter;
 
 import java.text.DateFormat;
@@ -42,6 +44,20 @@ public class Utils {
 
     }
 
+
+    public static  String formatRepoTime(String raw){
+        String parsed = "";
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.getDefault());
+        try {
+            Date date = format.parse(raw);
+            parsed = formatDate(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return parsed;
+
+    }
 
     private static  String formatDate(Date date) {
 
